@@ -1,5 +1,7 @@
 package com.nickdnepr;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Random;
 import java.util.Vector;
 
@@ -20,7 +22,7 @@ public class Controller {
             checkAndLogSingleDice(model);
         }
 
-        outputResults();
+        outputResults(numberOfThrows);
     }
 
     private static Model throwSingleDiceSet() {
@@ -40,32 +42,32 @@ public class Controller {
 //если покер состоит из нечетных, то он также подходит под условие всех нечетных, учитываем это
             if (model.getDiceState().firstElement() % 2 != 0) {
                 numberOfNotEven++;
-                System.out.println(model.getDiceState().toString() + " not even and poker");
+//                System.out.println(model.getDiceState().toString() + " not even and poker");
                 return;
             }
-            System.out.println(model.getDiceState().toString() + " poker");
+//            System.out.println(model.getDiceState().toString() + " poker");
             return;
         }
 
         if (checkForNotEven(model)) {
             numberOfNotEven++;
-            System.out.println(model.getDiceState().toString() + " not even");
+//            System.out.println(model.getDiceState().toString() + " not even");
         }
 
         if (checkForStreet(model)) {
             if (model.getDiceState().contains(1)) {
                 numberOfSmallStreet++;
-                System.out.println(model.getDiceState().toString() + " small street");
+//                System.out.println(model.getDiceState().toString() + " small street");
                 return;
             } else {
                 numberOfBigStreet++;
-                System.out.println(model.getDiceState().toString() + " big street");
+//                System.out.println(model.getDiceState().toString() + " big street");
                 return;
             }
         }
 
         if (checkForCare(model)) {
-            System.out.println(model.getDiceState().toString() + " care");
+//            System.out.println(model.getDiceState().toString() + " care");
             numberOfCare++;
         }
     }
@@ -143,12 +145,27 @@ public class Controller {
         numberOfCare = 0;
     }
 
-    private static void outputResults() {
+    private static void outputResults(int numberOfThrows) {
         System.out.println("number of poker: " + numberOfPoker);
         System.out.println("number of not even: " + numberOfNotEven);
         System.out.println("number of small street: " + numberOfSmallStreet);
         System.out.println("number of big street: " + numberOfBigStreet);
         System.out.println("number of care: " + numberOfCare);
+        System.out.println("Percent of poker is "+getPercents(numberOfPoker, numberOfThrows));
+        System.out.println("Percent of not even is "+getPercents(numberOfNotEven, numberOfThrows));
+        System.out.println("Percent of small street is "+getPercents(numberOfSmallStreet, numberOfThrows));
+        System.out.println("Percent of big street is "+getPercents(numberOfBigStreet, numberOfThrows));
+        System.out.println("Percent of care is "+getPercents(numberOfCare, numberOfThrows));
+    }
+
+    private static String getPercents(int numerator, int denominator) {
+        StringBuilder builder = new StringBuilder("");
+        double d = (double) numerator / denominator;
+        BigDecimal decimal = new BigDecimal((double) numerator / denominator);
+//        decimal.setScale(2, BigDecimal.ROUND_CEILING);
+        builder.append(decimal.multiply(new BigDecimal(100)).setScale(4, BigDecimal.ROUND_CEILING));
+        builder.append("%");
+        return builder.toString();
     }
 
 }
